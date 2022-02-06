@@ -13,8 +13,13 @@
     width: max-content;
 }
 
+.option > * {
+    padding: 0.25rem;
+    margin: 1rem;
+}
 .board {
     display: grid;
+    margin: 1rem;
     grid-template-rows: 8rem 8rem 8rem;
     grid-template-columns: 8rem 8rem 8rem;
     justify-content: center;
@@ -22,4 +27,11 @@
 
 .cell {
     border: 1px solid black;
+}
+
+.message {
+    border: 1px solid black;
+    width: 400px;
+    height: 100px;
+    justify-content: center;
 }

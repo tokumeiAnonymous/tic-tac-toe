@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tac-Toe</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
     <div class="option">
@@ -25,20 +25,25 @@
                 <option value="O">O</option>
             </select>
         </div>
+        <button class="restart"> Restart </button>
     </div>
 
     <div class="board-container">
         <div class="board">
-            <div class="cell" id="cell-1"></div>
-            <div class="cell" id="cell-1"></div>
-            <div class="cell" id="cell-1"></div>
-            <div class="cell" id="cell-1"></div>
-            <div class="cell" id="cell-1"></div>
-            <div class="cell" id="cell-1"></div>
-            <div class="cell" id="cell-1"></div>
-            <div class="cell" id="cell-1"></div>
-            <div class="cell" id="cell-1"></div>
+            <div class="cell" data-cell-number="1"></div>
+            <div class="cell" data-cell-number="2"></div>
+            <div class="cell" data-cell-number="3"></div>
+            <div class="cell" data-cell-number="4"></div>
+            <div class="cell" data-cell-number="5"></div>
+            <div class="cell" data-cell-number="6"></div>
+            <div class="cell" data-cell-number="7"></div>
+            <div class="cell" data-cell-number="8"></div>
+            <div class="cell" data-cell-number="9"></div>
         </div>
+    </div>
+
+    <div class="message">
+        
     </div>
     
 </body>
