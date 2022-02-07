@@ -4,11 +4,10 @@
     box-sizing: border-box;
 }
 
-
 .option {
     display: flex;
     border: 1px solid black;
-    padding: 1rem;
+    padding: 0.25rem;
     margin: 1rem;
     width: max-content;
 }
@@ -31,7 +30,8 @@
 
 .message {
     border: 1px solid black;
-    width: 400px;
-    height: 100px;
+    width: 24rem;
+    height: 8rem;
     justify-content: center;
+    align-items: center;
 }
