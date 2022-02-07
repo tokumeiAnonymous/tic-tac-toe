@@ -40,7 +40,7 @@ let player2 = playerFactory("O");
 
 startGame(opponent);
 
-const checkWinner = (player) => {
+function checkWinner(player) {
 
     let counter = 0;
     for (let i = 0; i < winningCombinations.length; i++){
