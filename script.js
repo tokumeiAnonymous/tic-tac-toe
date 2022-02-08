@@ -14,13 +14,12 @@ restart.addEventListener('click', restartGame);
 
 // Initializing default variables values
 const isEmpty = [true, true, true, true, true, true, true, true, true];
-let opponent = opponentInput.value;
-let turn = turnInput.value;
-let opponentTurn;
+let opponent, turn, opponentTurn;
+let player1, player2;
 
-const winningCombinations = [[1,2,3],[4,5,6],[7,8,9],
-                             [1,4,7],[2,5,8],[3,6,9],
-                             [1,5,9],[3,5,7]];
+const winningCombinations = [[0,1,2],[3,4,5],[6,7,8],
+                             [0,3,6],[1,4,7],[2,5,8],
+                             [0,4,8],[2,4,6]];
 
 const playerFactory = (turn) => {
     const inputs = [];
@@ -29,15 +28,68 @@ const playerFactory = (turn) => {
     return {inputs, mark};
 }
 
-const getRandom = () => {
-    let random = parseInt(Math.random() * 8) + 1;
+const getRandom = (emptySlots) => {
+    let random = parseInt(Math.random() * emptySlots.length);
 
-    return random;
+    return emptySlots[random];
 }
 
-let player1 = playerFactory("X");
-let player2 = playerFactory("O");
+const gameWithHuman = () => {
+    cells.forEach((cell) => {
+        cell.addEventListener('click', () => {
+            let cellNumber, player;
+    
+            if (player1.inputs.length > player2.inputs.length) player = player2;
+            else player = player1;
 
+            cellNumber = cell.getAttribute('data-cell-number');
+
+            if (isEmpty[cellNumber]) {
+                isEmpty[cellNumber] = false;
+                drawMark(player, cell);
+                player.inputs.push(parseInt(cellNumber));
+                checkWinner(player);  
+            }
+        });
+    });
+}
+
+const gameWithRandom = (player) => {
+    cells.forEach((cell) => {
+        cell.addEventListener('click', () => {
+            let cellNumber, player;
+
+            player = player1;
+
+            cellNumber = cell.getAttribute('data-cell-number');
+
+            if (isEmpty[cellNumber]) {
+                isEmpty[cellNumber] = false;
+                drawMark(player, cell);
+                player.inputs.push(parseInt(cellNumber));
+                checkWinner(player);  
+            }
+
+            let emptySlots = [];
+
+            for (let i = 0; i < isEmpty.length; i++){
+                if (isEmpty[i]) emptySlots.push(i);
+            }
+
+            console.log(emptySlots);
+
+            cellNumber = getRandom(emptySlots);
+            let randomCell = document.querySelector(`[data-cell-number="${cellNumber}"]`);
+            isEmpty[cellNumber] = false;
+            drawMark(player2, randomCell);
+            player2.inputs.push(cellNumber);
+            checkWinner(player2); 
+            
+        });
+    });
+}
+
+setInitialValue();
 startGame(opponent);
 
 function checkWinner(player) {
@@ -51,49 +103,29 @@ function checkWinner(player) {
         }
         if (counter == 3){
             endGame(player);
-            return true;
+            return;
         }
         counter = 0;
     }
 
     if (player1.inputs.length + player2.inputs.length >= 9){
         endGame("Draw");
-        return true;
     }
     
-    return false;
 }
 
 function startGame(opponent) {
-    
-        cells.forEach((cell) => {
-            cell.addEventListener('click', () => {
-                let cellNumber, player;
-        
-                if (player1.inputs.length > player2.inputs.length) player = player2;
-                else player = player1;
 
-                if (opponent == "human") {
-                    cellNumber = cell.getAttribute('data-cell-number');
-                } else {
-                    if (player === player1) {
-                        cellNumber = cell.getAttribute('data-cell-number');
-                    } else {
-                        cellNumber = getRandom();
-                        while (!isEmpty[cellNumber]){
-                            cellNumber = getRandom();
-                        }
-                    }
-                }
+    let game;
 
-                if (isEmpty[cellNumber - 1]) {
-                    isEmpty[cellNumber - 1] = false;
-                    drawMark(player, cell);
-                    player.inputs.push(parseInt(cellNumber));
-                    checkWinner(player);  
-                }
-            });
-        });
+    if (opponent == "human") {
+        game = gameWithHuman();
+    }
+    else if (opponent == "randomAI") {
+        game = gameWithRandom(player1);
+    } else {
+        game = gameWithSmart(player1);
+    }
     
 }
 
@@ -103,7 +135,32 @@ function drawMark(player, cell) {
 }
 
 function restartGame() {
-   location.reload();
+
+    clearDisplay();
+    setInitialValue();
+    startGame(opponent);
+
+}
+
+function clearDisplay() {
+
+    cells.forEach((cell) => {
+        cell.innerText = "";
+    });
+    message.innerText = "";
+
+}
+
+function setInitialValue() {
+
+    for (let i = 0; i < isEmpty.length; i++){
+        isEmpty[i] = true;
+    }
+    player1 = playerFactory("X");
+    player2 = playerFactory("O");
+    opponent = opponentInput.value;
+    turn = turnInput.value;
+
 }
 
 function endGame(player) {
@@ -119,13 +176,9 @@ function endGame(player) {
 function postMessage(player) {
 
     if (player == "Draw") { 
-        const resultHolder = document.createElement('div');
-        resultHolder.innerText = "It's a draw!";
-        message.appendChild(resultHolder);
+        message.innerText = "It's a draw!"
     }
     else {
-        const resultHolder = document.createElement('div');
-        resultHolder.innerText = `Player ${player.mark} won!`;
-        message.appendChild(resultHolder);
+        message.innerText = `Player ${player.mark} won!`;
     }
 }
