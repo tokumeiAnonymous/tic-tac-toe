@@ -1,12 +1,21 @@
+
+:root {
+    --red: #e94141;
+    --blue: #0086f4;
+    --light-white: #f0f0f0;
+    --border-size: 5px;
+}
+
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    background-color: var(--light-white);
 }
 
 .option {
     display: flex;
-    border: 1px solid black;
+    border: var(--border-size) solid black;
     padding: 0.25rem;
     margin: 1rem;
     width: max-content;
@@ -19,8 +28,8 @@
 .board {
     display: grid;
     margin: 1rem;
-    grid-template-rows: 8rem 8rem 8rem;
-    grid-template-columns: 8rem 8rem 8rem;
+    grid-template-rows: 102px 102px 102px;
+    grid-template-columns: 102px 102px 102px;
     justify-content: center;
 }
 
@@ -30,8 +39,19 @@
 
 .message {
     border: 1px solid black;
-    width: 24rem;
-    height: 8rem;
+    width: 306px;
+    height: 102px;
     justify-content: center;
     align-items: center;
+}
+
+button, select {
+    border: var(--border-size) solid black;
+    opacity: 0.8;
+    background-color: var(--blue);
+    border-radius: 5px;
+}
+
+button:hover, select:hover {
+    opacity: 1;
 }

@@ -46,7 +46,7 @@ const gameWithHuman = () => {
 
             if (isEmpty[cellNumber]) {
                 isEmpty[cellNumber] = false;
-                drawMark(player, cell);
+                cell.append(drawMark(player, cell));
                 player.inputs.push(parseInt(cellNumber));
                 checkWinner(player);  
             }
@@ -65,10 +65,10 @@ const gameWithRandom = (player) => {
 
             if (isEmpty[cellNumber]) {
                 isEmpty[cellNumber] = false;
-                drawMark(player, cell);
+                cell.append(drawMark(player, cell));
                 player.inputs.push(parseInt(cellNumber));
                 checkWinner(player);  
-            }
+            
 
             let emptySlots = [];
 
@@ -81,9 +81,10 @@ const gameWithRandom = (player) => {
             cellNumber = getRandom(emptySlots);
             let randomCell = document.querySelector(`[data-cell-number="${cellNumber}"]`);
             isEmpty[cellNumber] = false;
-            drawMark(player2, randomCell);
+            randomCell.append(drawMark(player2, randomCell));
             player2.inputs.push(cellNumber);
             checkWinner(player2); 
+            }
             
         });
     });
@@ -131,7 +132,12 @@ function startGame(opponent) {
 
 function drawMark(player, cell) {
 
-    return cell.innerText = player.mark;
+    const draw = document.createElement('img');
+    
+    if (player.mark == "X") draw.src = "Resources/X.png";
+    else draw.src = "Resources/O.png";
+
+    return draw;
 }
 
 function restartGame() {
