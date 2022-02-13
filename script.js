@@ -1,4 +1,3 @@
-
 // DOM objects
 const opponentInput = document.querySelector('#opponent');
 const turnInput = document.querySelector('#turn');
@@ -34,7 +33,7 @@ const getRandom = (emptySlots) => {
     return emptySlots[random];
 }
 
-const gameWithHuman = () => {
+function gameWithHuman() {
     cells.forEach((cell) => {
         cell.addEventListener('click', () => {
             let cellNumber, player;
@@ -54,7 +53,7 @@ const gameWithHuman = () => {
     });
 }
 
-const gameWithRandom = (player) => {
+function gameWithRandom() {
     cells.forEach((cell) => {
         cell.addEventListener('click', () => {
             let cellNumber, player;
@@ -75,8 +74,6 @@ const gameWithRandom = (player) => {
             for (let i = 0; i < isEmpty.length; i++){
                 if (isEmpty[i]) emptySlots.push(i);
             }
-
-            console.log(emptySlots);
 
             cellNumber = getRandom(emptySlots);
             let randomCell = document.querySelector(`[data-cell-number="${cellNumber}"]`);
@@ -117,15 +114,12 @@ function checkWinner(player) {
 
 function startGame(opponent) {
 
-    let game;
-
     if (opponent == "human") {
-        game = gameWithHuman();
-    }
-    else if (opponent == "randomAI") {
-        game = gameWithRandom(player1);
+        gameWithHuman();
+    } else if (opponent == "randomAI") {
+        gameWithRandom();
     } else {
-        game = gameWithSmart(player1);
+        gameWithRandom();
     }
     
 }
@@ -144,8 +138,6 @@ function restartGame() {
 
     clearDisplay();
     setInitialValue();
-    startGame(opponent);
-
 }
 
 function clearDisplay() {
@@ -166,6 +158,7 @@ function setInitialValue() {
     player2 = playerFactory("O");
     opponent = opponentInput.value;
     turn = turnInput.value;
+    startGame(opponent);
 
 }
 

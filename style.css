@@ -10,7 +10,13 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    background-color: var(--light-white);
+    background: linear-gradient(
+        to right, 
+        var(--blue) 0%, 
+        var(--blue) 50%, 
+        var(--red) 50%, 
+        var(--red) 100%
+      );
 }
 
 .option {
@@ -19,11 +25,13 @@
     padding: 0.25rem;
     margin: 1rem;
     width: max-content;
+    background: none;
 }
 
 .option > * {
     padding: 0.25rem;
     margin: 1rem;
+    background: none;
 }
 .board {
     display: grid;
@@ -31,10 +39,12 @@
     grid-template-rows: 102px 102px 102px;
     grid-template-columns: 102px 102px 102px;
     justify-content: center;
+    background: none;
 }
 
 .cell {
     border: 1px solid black;
+    background: white;
 }
 
 .message {
@@ -43,6 +53,7 @@
     height: 102px;
     justify-content: center;
     align-items: center;
+    background: none;
 }
 
 button, select {
@@ -50,6 +61,11 @@ button, select {
     opacity: 0.8;
     background-color: var(--blue);
     border-radius: 5px;
+    background: none;
+}
+
+label {
+    background: none;
 }
 
 button:hover, select:hover {
