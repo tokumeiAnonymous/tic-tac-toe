@@ -1,12 +1,16 @@
 
 ## Tic Tac Toe implementation
+This is an implementation of tic-tac-toe where you can choose the players. It can be.
 
-## Things to update
-- Refractor game
-- Problem with changing opponent. Need to clear the previous event listeners.
+- Human vs Human
+- Human vs RandomAI
+- Human vs SmartAI
+- RandomAI vs RandomAI
+- RandomAI vs SmartAI
+- SmartAI vs SmartAI
+- And the of the pairings above.
 
 ## Future features to be implemented
-- Change mark
 - Smart AI
 
 ## Credits: 

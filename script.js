@@ -10,8 +10,11 @@ restart.addEventListener('click', () => {
 
 const refresh = document.querySelector('.refresh');
 refresh.addEventListener('click', () => {
+    if (!gameOver){
+        alert("Please do not surrender. Continue the game.");
+    } else {
     clearDisplay();
-    startGame(player1, player2);
+    startGame(player1, player2);}
 })
 
 player1Input.forEach((choice) => {
@@ -53,7 +56,7 @@ const playerFactory = (playerState, input) => {
     const getChoice = (boardState) => {
         if (playerState == "RandomAI") {
             return randomChoice(boardState);
-        } else return smartChoice(boardState, playerState);
+        } else return smartChoice(boardState, mark);
     }
 
     return { playerState, inputs, mark, getChoice };
@@ -71,27 +74,57 @@ const randomChoice = (boardState) => {
     return emptySlots[random];
 }
 
-const smartChoice = (boardState) => {
+const smartChoice = (boardState, mark) => {
 
     // I know I could have use playerX.inputs and playerO.inputs here
-    // I will fix it if I have time. I prioritized the concept here anyway.
+    // I will fix it if I have time. I prioritized the concept here anyway. 
+    /*
     let emptySlots = [];
     let xInputs = [];
-    let oInputs = [];
+    let oInputs = []; 
+    */
+    let result = [];
+    let tempState = boardState;
 
+    /*
     for (let i = 0; i < boardState.length; i++) {
         if (boardState[i] == "") emptySlots.push(i);
         if (boardState[i] == "X") xInputs.push(i);
         if (boardState[i] == "O") oInputs.push(i);
     }
+    */
 
-    const minmax = (emptySlots, xInputs, oInputs) => {
+    for (let i = 0; i < boardState.length; i++){
+        
+    }
 
+    const heuristicEval = (tempState) => {
 
+        let counterX = 0;
+        let counterO = 0;
+        for (let i = 0; i < winningCombinations.length; i++) {
+            for (let j = 0; j < winningCombinations[i].length; j++) {
+
+                if (tempState[winningCombinations[i][j]] == "X") counterX++;
+                else if (tempState[winningCombinations[i][j]] == "O") counterO++;
+            }
+            if (counterX == 3) return 10;
+            else if (counterO == 3) return -10;
+            counterX = 0;
+            counterO = 0;
         }
     
+        return 0;
+    }
 
-    return minmax;
+    if (mark == "X") {
+        return result.reduce(function(a, b) {
+            return Math.max(a, b);
+        }, -Infinity);
+    }
+    else return arr.reduce(function(a, b) {
+        return Math.min(a, b);
+    }, Infinity);
 }
 
 const startGame = (player1, player2) => {
@@ -202,6 +235,7 @@ const isGameOver = (player) => {
         }
         if (counter == 3) {
             postMessage(player);
+            gameOver = true;
             return true;
         }
         counter = 0;
@@ -209,6 +243,7 @@ const isGameOver = (player) => {
 
     if (player.inputs.length >= 5) {
         postMessage("draw");
+        gameOver = true;
         return true;
     }
 
@@ -227,9 +262,10 @@ function drawMark(player, cellNumber) {
 }
 
 let player1, player2;
+let gameOver = false;
 const winningCombinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8],
-[0, 3, 6], [1, 4, 7], [2, 5, 8],
-[0, 4, 8], [2, 4, 6]];
+                            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                            [0, 4, 8], [2, 4, 6]];
 
 function endGame(boardState) {
 
@@ -255,5 +291,30 @@ function clearDisplay() {
     cells.forEach((cell) => {
         cell.innerText = "";
     });
+
+    gameOver = false;
+
+}
+
+const checkResult = (inputs) => {
+
+    let counter = 0;
+    for (let i = 0; i < winningCombinations.length; i++) {
+        for (let j = 0; j < winningCombinations[i].length; j++) {
+            if (inputs.includes(winningCombinations[i][j])) {
+                counter++;
+            }
+        }
+        if (counter == 3) {
+            return true;
+        }
+        counter = 0;
+    }
+
+    if (inputs.length >= 5) {
+        return true;
+    }
+
+    return false;
 
 }
