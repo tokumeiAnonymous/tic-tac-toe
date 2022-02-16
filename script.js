@@ -1,183 +1,259 @@
 // DOM objects
-const opponentInput = document.querySelector('#opponent');
-const turnInput = document.querySelector('#turn');
+const player1Input = document.querySelectorAll('.player-1');
+const player2Input = document.querySelectorAll('.player-2');
 const cells = document.querySelectorAll('.cell');
+
 const restart = document.querySelector('.restart');
-const message = document.querySelector('.message');
+restart.addEventListener('click', () => {
+    location.reload();
+});
 
-// Adding event listeners
+const refresh = document.querySelector('.refresh');
+refresh.addEventListener('click', () => {
+    clearDisplay();
+    startGame(player1, player2);
+})
 
-opponentInput.addEventListener('change', restartGame);
-turnInput.addEventListener('change', restartGame);
-restart.addEventListener('click', restartGame);
+player1Input.forEach((choice) => {
+    choice.addEventListener('click', () => {
+        // clear the selected of all the DOM object
+        player1Input.forEach((cell) => {
+            cell.classList.remove("selected");
+        });
+        choice.classList.add("selected");
+        player1 = choice.value;
+    });
+});
 
-// Initializing default variables values
-const isEmpty = [true, true, true, true, true, true, true, true, true];
-let opponent, turn, opponentTurn;
-let player1, player2;
+player2Input.forEach((choice) => {
+    choice.addEventListener('click', () => {
+        // clear the selected of all the DOM object
+        player2Input.forEach((cell) => {
+            cell.classList.remove("selected");
+        });
+        choice.classList.add("selected");
+        player2 = choice.value;
+    });
+});
 
-const winningCombinations = [[0,1,2],[3,4,5],[6,7,8],
-                             [0,3,6],[1,4,7],[2,5,8],
-                             [0,4,8],[2,4,6]];
+const start = document.querySelector('.start');
 
-const playerFactory = (turn) => {
+start.addEventListener('click', () => {
+    const modal = document.querySelector('.modal-container');
+    if (player1 != undefined && player2 != undefined) {
+        modal.style.display = "none";
+        startGame(player1, player2);
+    }
+});
+
+const playerFactory = (playerState, input) => {
     const inputs = [];
-    let mark = turn;
+    const mark = input;
 
-    return {inputs, mark};
+    const getChoice = (boardState) => {
+        if (playerState == "RandomAI") {
+            return randomChoice(boardState);
+        } else return smartChoice(boardState, playerState);
+    }
+
+    return { playerState, inputs, mark, getChoice };
 }
 
-const getRandom = (emptySlots) => {
+const randomChoice = (boardState) => {
+
+    let emptySlots = [];
+    for (let i = 0; i < boardState.length; i++) {
+        if (boardState[i] == "") emptySlots.push(i);
+    }
+
     let random = parseInt(Math.random() * emptySlots.length);
 
     return emptySlots[random];
 }
 
-function gameWithHuman() {
-    cells.forEach((cell) => {
-        cell.addEventListener('click', () => {
-            let cellNumber, player;
+const smartChoice = (boardState) => {
+
+    // I know I could have use playerX.inputs and playerO.inputs here
+    // I will fix it if I have time. I prioritized the concept here anyway.
+    let emptySlots = [];
+    let xInputs = [];
+    let oInputs = [];
+
+    for (let i = 0; i < boardState.length; i++) {
+        if (boardState[i] == "") emptySlots.push(i);
+        if (boardState[i] == "X") xInputs.push(i);
+        if (boardState[i] == "O") oInputs.push(i);
+    }
+
+    const minmax = (emptySlots, xInputs, oInputs) => {
+
+
+        }
     
-            if (player1.inputs.length > player2.inputs.length) player = player2;
-            else player = player1;
 
-            cellNumber = cell.getAttribute('data-cell-number');
-
-            if (isEmpty[cellNumber]) {
-                isEmpty[cellNumber] = false;
-                cell.append(drawMark(player, cell));
-                player.inputs.push(parseInt(cellNumber));
-                checkWinner(player);  
-            }
-        });
-    });
+    return minmax;
 }
 
-function gameWithRandom() {
+const startGame = (player1, player2) => {
+
+    const playerX = playerFactory(player1, "X");
+    const playerO = playerFactory(player2, "O");
+
+    if (player1 == "Human" && player2 == "Human") {
+        return humanGame(playerX, playerO);
+    } else if (player1 == "Human") {
+        return gameWithHuman(playerX, playerO);
+    } else if (player2 == "Human"){
+        gameWithHuman(playerO, playerX);
+    } else {
+        return aiGame(playerX, playerO);
+    }
+}
+
+const aiGame = (playerX, playerO) => {
+
+    const boardState = ["", "", "", "", "", "", "", "", ""];
+
+    while (true) {
+        let pick1 = playerX.getChoice(boardState);
+        boardState[pick1] = playerX.mark;
+        playerX.inputs.push(pick1);
+        drawMark(playerX, pick1);
+        if (isGameOver(playerX)) break;
+
+        let pick2 = playerO.getChoice(boardState);
+        boardState[pick2] = playerO.mark;
+        playerO.inputs.push(pick2);
+        drawMark(playerO, pick2);
+        if (isGameOver(playerO)) break;
+
+    }
+}
+
+const humanGame = (playerX, playerO) => {
+
+    const boardState = ["", "", "", "", "", "", "", "", ""];
+
     cells.forEach((cell) => {
         cell.addEventListener('click', () => {
-            let cellNumber, player;
+            let cellNumber, playing;
 
-            player = player1;
+            if (playerX.inputs.length > playerO.inputs.length) playing = playerO;
+            else playing = playerX;
 
             cellNumber = cell.getAttribute('data-cell-number');
 
-            if (isEmpty[cellNumber]) {
-                isEmpty[cellNumber] = false;
-                cell.append(drawMark(player, cell));
-                player.inputs.push(parseInt(cellNumber));
-                checkWinner(player);  
-            
-
-            let emptySlots = [];
-
-            for (let i = 0; i < isEmpty.length; i++){
-                if (isEmpty[i]) emptySlots.push(i);
+            if (boardState[cellNumber] == "") {
+                boardState[cellNumber] = playing.mark;
+                drawMark(playing, cellNumber);
+                playing.inputs.push(parseInt(cellNumber));
+                if (isGameOver(playing)) {
+                    endGame(boardState);
+                }
             }
-
-            cellNumber = getRandom(emptySlots);
-            let randomCell = document.querySelector(`[data-cell-number="${cellNumber}"]`);
-            isEmpty[cellNumber] = false;
-            randomCell.append(drawMark(player2, randomCell));
-            player2.inputs.push(cellNumber);
-            checkWinner(player2); 
-            }
-            
         });
     });
 }
 
-setInitialValue();
-startGame(opponent);
+const gameWithHuman = (humanPlayer, aiPlayer) => {
 
-function checkWinner(player) {
+    const boardState = ["", "", "", "", "", "", "", "", ""];
+    
+    if (humanPlayer.mark != "X") {
+        let cellNumber = aiPlayer.getChoice(boardState);
+        boardState[cellNumber] = aiPlayer.mark;
+        drawMark(aiPlayer, cellNumber);
+        aiPlayer.inputs.push(cellNumber);
+    }
+    
+    cells.forEach((cell) => {
+        cell.addEventListener('click', () => {
+
+            let cellNumber = cell.getAttribute('data-cell-number');
+
+            if (boardState[cellNumber] == "") {
+                boardState[cellNumber] = humanPlayer.mark;
+                drawMark(humanPlayer, cellNumber);
+                humanPlayer.inputs.push(parseInt(cellNumber));
+                if (isGameOver(humanPlayer)){
+                    endGame(boardState);
+                }
+
+                cellNumber = aiPlayer.getChoice(boardState);
+                boardState[cellNumber] = aiPlayer.mark;
+                drawMark(aiPlayer, cellNumber);
+                aiPlayer.inputs.push(cellNumber);
+                if (isGameOver(aiPlayer)){
+                    endGame(boardState);
+                }
+            }
+        });
+    });
+}
+
+const isGameOver = (player) => {
 
     let counter = 0;
-    for (let i = 0; i < winningCombinations.length; i++){
-        for (let j = 0; j < winningCombinations[i].length; j++){
-            if(player.inputs.includes(winningCombinations[i][j])) {
+    for (let i = 0; i < winningCombinations.length; i++) {
+        for (let j = 0; j < winningCombinations[i].length; j++) {
+            if (player.inputs.includes(winningCombinations[i][j])) {
                 counter++;
             }
         }
-        if (counter == 3){
-            endGame(player);
-            return;
+        if (counter == 3) {
+            postMessage(player);
+            return true;
         }
         counter = 0;
     }
 
-    if (player1.inputs.length + player2.inputs.length >= 9){
-        endGame("Draw");
+    if (player.inputs.length >= 5) {
+        postMessage("draw");
+        return true;
     }
-    
+
+    return false;
 }
 
-function startGame(opponent) {
-
-    if (opponent == "human") {
-        gameWithHuman();
-    } else if (opponent == "randomAI") {
-        gameWithRandom();
-    } else {
-        gameWithRandom();
-    }
-    
-}
-
-function drawMark(player, cell) {
+function drawMark(player, cellNumber) {
 
     const draw = document.createElement('img');
-    
+
     if (player.mark == "X") draw.src = "Resources/X.png";
     else draw.src = "Resources/O.png";
 
-    return draw;
+    const cell = document.querySelector(`[data-cell-number='${cellNumber}']`);
+    cell.appendChild(draw);
 }
 
-function restartGame() {
+let player1, player2;
+const winningCombinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8],
+[0, 3, 6], [1, 4, 7], [2, 5, 8],
+[0, 4, 8], [2, 4, 6]];
 
-    clearDisplay();
-    setInitialValue();
+function endGame(boardState) {
+
+    for (let i = 0; i < boardState.length; i++) {
+        boardState[i] = "X";
+    }
+}
+
+function postMessage(player) {
+    const message = document.querySelector('.message');
+    if (player == "draw") {
+        message.innerText = "It's a draw. What a close match!"
+    } else {
+        message.innerText = `Player ${player.mark} won! Congratulations. 
+                            ${player.playerState} won this time.`;
+    }
 }
 
 function clearDisplay() {
+    const message = document.querySelector('.message');
+    message.innerText = "";
 
     cells.forEach((cell) => {
         cell.innerText = "";
     });
-    message.innerText = "";
 
-}
-
-function setInitialValue() {
-
-    for (let i = 0; i < isEmpty.length; i++){
-        isEmpty[i] = true;
-    }
-    player1 = playerFactory("X");
-    player2 = playerFactory("O");
-    opponent = opponentInput.value;
-    turn = turnInput.value;
-    startGame(opponent);
-
-}
-
-function endGame(player) {
-
-    for (let i = 0; i < isEmpty.length; i++){
-        isEmpty[i] = false;
-    }
-
-    if (player == "Draw") postMessage("Draw");
-    else postMessage(player);
-}
-
-function postMessage(player) {
-
-    if (player == "Draw") { 
-        message.innerText = "It's a draw!"
-    }
-    else {
-        message.innerText = `Player ${player.mark} won!`;
-    }
 }

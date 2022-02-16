@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,24 +10,36 @@
     <link rel="icon" href="Resources/tic-tac-toe.png">
     <script src="script.js" defer></script>
 </head>
+
 <body>
-    <div class="option">
-        <div class="against">
-            <label for="opponent">Choose Opponent</label>
-            <select name="opponent" id="opponent">
-                <option value="human">Human</option>
-                <option value="randomAI">RandomAI</option>
-                <option value="smartAI">SmartAI</option>
-            </select>
+    <div class="modal-container">
+        <div class="modal-option">
+            <div class="option">
+                <button value="Human" class="player-1">
+                    Human
+                </button>
+                <button value="RandomAI" class="player-1">
+                    Random AI
+                </button>
+                <button value="SmartAI" class="player-1">
+                    Smart AI
+                </button>
+            </div>
+            <button class="start">
+                Start
+            </button>
+            <div class="option">
+                <button value="Human" class="player-2">
+                    Human
+                </button>
+                <button value="RandomAI" class="player-2">
+                    Random AI
+                </button>
+                <button value="SmartAI" class="player-2">
+                    Smart AI
+                </button>
+            </div>
         </div>
-        <div>
-            <label for="turn">Choose Sign</label>
-            <select name="turn" id="turn">
-                <option value="X">X</option>
-                <option value="O">O</option>
-            </select>
-        </div>
-        <button class="restart"> New Game </button>
     </div>
 
     <div class="board-container">
@@ -40,12 +53,16 @@
             <div class="cell" data-cell-number="6"></div>
             <div class="cell" data-cell-number="7"></div>
             <div class="cell" data-cell-number="8"></div>
-            
+
             <div class="message">
-        
+
             </div>
         </div>
     </div>
-    
+    <div class="new">
+        <button class="restart">Choose Player</button>
+        <button class="refresh">Rematch</button>
+    </div>
 </body>
+
 </html>
