@@ -23,11 +23,23 @@ body {
         var(--pink) 50%, 
         var(--pink) 100%
       );
+
+}
+
+.title {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 50px;
+    margin-left: 43.5%;
+    color: white;
+    background-color: gray;
+    width: fit-content;
+    border: 3px solid white;
+    border-radius: 1rem;
 }
 
 .board-container {
     display: flex;
-    margin-top: 5%;
     justify-content: center;
     align-items: center;
 }
